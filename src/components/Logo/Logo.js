@@ -1,6 +1,7 @@
 import React from "react";
 import Tilt from "react-parallax-tilt";
 import "./Logo.css";
+import brain from "./brain.png";
 
 const Logo = () => {
   return (
@@ -14,8 +15,8 @@ const Logo = () => {
           width: "200px",
         }}
       >
-        <div>
-          <h1>React Parallax Tilt 👀</h1>
+        <div className="pa3">
+          <img alt="logo" src={brain} style={{ paddingTop: "32.5px" }} />
         </div>
       </Tilt>
     </div>
