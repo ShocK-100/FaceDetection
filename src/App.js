@@ -15,8 +15,8 @@ const USER_ID = "tal";
 const PAT = "830f6947a77f40449fed31e2ca59ef80";
 const APP_ID = "my-first-application";
 // Change these to whatever model and image URL you want to use
-const MODEL_ID = "color-recognition";
-const MODEL_VERSION_ID = "dd9458324b4b45c2be1a7ba84d27cd04";
+const MODEL_ID = "face-detection";
+const MODEL_VERSION_ID = "6dc7e46bc9124c5c8824be4822abe105";
 const IMAGE_URL = "https://samples.clarifai.com/face-det.jpg";
 let raw = JSON.stringify({
   user_app_id: {
@@ -70,7 +70,13 @@ class App extends Component {
       requestOptions
     )
       .then((response) => response.text())
-      .then((result) => console.log(JSON.parse(result)))
+      .then((result) =>
+        console.log(
+          JSON.parse(result)["outputs"][0]["data"]["regions"][0]["region_info"][
+            "bounding_box"
+          ]
+        )
+      )
       .catch((error) => console.log("error", error));
   };
 
