@@ -8,12 +8,9 @@ import "./App.css";
 import { Component } from "react";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
 
-// const Clarifai = require("clarifai");
 const USER_ID = "tal";
-// Your PAT (Personal Access Token) can be found in the portal under Authentification
 const PAT = "830f6947a77f40449fed31e2ca59ef80";
 const APP_ID = "my-first-application";
-// Change these to whatever model and image URL you want to use
 const MODEL_ID = "face-detection";
 const MODEL_VERSION_ID = "6dc7e46bc9124c5c8824be4822abe105";
 const IMAGE_URL = "";
@@ -48,20 +45,37 @@ class App extends Component {
     this.state = {
       input: "",
       imageURL: "",
+      box: {},
     };
   }
+
+  calculateFaceLocation = (face) => {
+    const image = document.getElementById("inputImage");
+    const width = Number(image.width);
+    const height = Number(image.height);
+    console.log("leftCol: ", face.left_col);
+    return {
+      leftCol: face.left_col * width,
+      topRow: face.top_row * height,
+      rightCol: width - face.right_col * width,
+      bottomRow: height - face.bottom_row * height,
+    };
+  };
+
+  displayFaceBox = (box) => {
+    // console.log("box: ", box);
+    this.setState({ box: box });
+  };
 
   onInputChange = (event) => {
     this.setState({ input: event.target.value });
   };
 
   onButtonSubmit = () => {
-    // console.log(raw);
     this.setState({ imageURL: this.state.input }, () => {
       let obj = JSON.parse(raw);
       obj["inputs"][0]["data"]["image"]["url"] = this.state.imageURL;
       raw = JSON.stringify(obj);
-      // console.log(raw);
 
       requestOptions = {
         method: "POST",
@@ -71,8 +85,6 @@ class App extends Component {
         },
         body: raw,
       };
-
-      console.log(requestOptions);
 
       fetch(
         "https://api.clarifai.com/v2/models/" +
@@ -85,14 +97,22 @@ class App extends Component {
         .then((response) => response.text())
         .then((result) => {
           let data = JSON.parse(result)["outputs"][0]["data"];
-          // console.log("data ", data);
+
           if (Object.keys(data).length === 0) {
             console.log("data is empty");
           } else {
-            console.log(data["regions"][0]["region_info"]["bounding_box"]);
+            console.log(
+              "data: ",
+              data["regions"][0]["region_info"]["bounding_box"]
+            );
+            this.displayFaceBox(
+              this.calculateFaceLocation(
+                data["regions"][0]["region_info"]["bounding_box"]
+              )
+            );
           }
         })
-        .catch((error) => console.log("error", error));
+        .catch((error) => console.log("error ", error));
     });
   };
 
@@ -113,7 +133,7 @@ class App extends Component {
           onInputChange={this.onInputChange}
           onButtonSubmit={this.onButtonSubmit}
         />
-        <FaceRecognition imageURL={this.state.imageURL} />
+        <FaceRecognition box={this.state.box} imageURL={this.state.imageURL} />
       </div>
     );
   }
