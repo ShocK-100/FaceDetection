@@ -6,7 +6,6 @@ import Rank from "./components/Rank/Rank";
 import ParticlesBg from "particles-bg";
 import "./App.css";
 import { Component } from "react";
-import Clarifai from "clarifai";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
 
 // const Clarifai = require("clarifai");
@@ -17,7 +16,7 @@ const APP_ID = "my-first-application";
 // Change these to whatever model and image URL you want to use
 const MODEL_ID = "face-detection";
 const MODEL_VERSION_ID = "6dc7e46bc9124c5c8824be4822abe105";
-const IMAGE_URL = "https://samples.clarifai.com/face-det.jpg";
+const IMAGE_URL = "";
 let raw = JSON.stringify({
   user_app_id: {
     user_id: USER_ID,
@@ -34,7 +33,7 @@ let raw = JSON.stringify({
   ],
 });
 
-const requestOptions = {
+let requestOptions = {
   method: "POST",
   headers: {
     Accept: "application/json",
@@ -57,27 +56,44 @@ class App extends Component {
   };
 
   onButtonSubmit = () => {
-    this.setState({ imageURL: this.state.input });
-    let obj = JSON.parse(raw);
-    obj["inputs"][0]["data"]["image"]["url"] = this.state.imageURL;
-    raw = JSON.stringify(obj);
-    fetch(
-      "https://api.clarifai.com/v2/models/" +
-        MODEL_ID +
-        "/versions/" +
-        MODEL_VERSION_ID +
-        "/outputs",
-      requestOptions
-    )
-      .then((response) => response.text())
-      .then((result) =>
-        console.log(
-          JSON.parse(result)["outputs"][0]["data"]["regions"][0]["region_info"][
-            "bounding_box"
-          ]
-        )
+    // console.log(raw);
+    this.setState({ imageURL: this.state.input }, () => {
+      let obj = JSON.parse(raw);
+      obj["inputs"][0]["data"]["image"]["url"] = this.state.imageURL;
+      raw = JSON.stringify(obj);
+      // console.log(raw);
+
+      requestOptions = {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Authorization: "Key " + PAT,
+        },
+        body: raw,
+      };
+
+      console.log(requestOptions);
+
+      fetch(
+        "https://api.clarifai.com/v2/models/" +
+          MODEL_ID +
+          "/versions/" +
+          MODEL_VERSION_ID +
+          "/outputs",
+        requestOptions
       )
-      .catch((error) => console.log("error", error));
+        .then((response) => response.text())
+        .then((result) => {
+          let data = JSON.parse(result)["outputs"][0]["data"];
+          // console.log("data ", data);
+          if (Object.keys(data).length === 0) {
+            console.log("data is empty");
+          } else {
+            console.log(data["regions"][0]["region_info"]["bounding_box"]);
+          }
+        })
+        .catch((error) => console.log("error", error));
+    });
   };
 
   render() {
