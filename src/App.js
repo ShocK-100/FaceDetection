@@ -7,6 +7,8 @@ import ParticlesBg from "particles-bg";
 import "./App.css";
 import { Component } from "react";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
+import Signin from "./components/Signin/Signin";
+import Register from "./components/Register/Register";
 
 const USER_ID = "tal";
 const PAT = "830f6947a77f40449fed31e2ca59ef80";
@@ -46,6 +48,8 @@ class App extends Component {
       input: "",
       imageURL: "",
       box: {},
+      route: "signin",
+      isSignedIn: false,
     };
   }
 
@@ -53,7 +57,6 @@ class App extends Component {
     const image = document.getElementById("inputImage");
     const width = Number(image.width);
     const height = Number(image.height);
-    console.log("leftCol: ", face.left_col);
     return {
       leftCol: face.left_col * width,
       topRow: face.top_row * height,
@@ -63,7 +66,6 @@ class App extends Component {
   };
 
   displayFaceBox = (box) => {
-    // console.log("box: ", box);
     this.setState({ box: box });
   };
 
@@ -116,7 +118,17 @@ class App extends Component {
     });
   };
 
+  onRouteChange = (route) => {
+    if (route === "signout") {
+      this.setState({ isSignedIn: false });
+    } else if (route === "home") {
+      this.setState({ isSignedIn: true });
+    }
+    this.setState({ route: route });
+  };
+
   render() {
+    const { isSignedIn, imageURL, route, box } = this.state;
     return (
       <div className="App">
         <ParticlesBg
@@ -126,14 +138,26 @@ class App extends Component {
           num={100}
           color="#ffffff"
         />
-        <Navigation />
-        <Logo />
-        <Rank />
-        <ImageLinkForm
-          onInputChange={this.onInputChange}
-          onButtonSubmit={this.onButtonSubmit}
+        <Navigation
+          isSignedIn={isSignedIn}
+          onRouteChange={this.onRouteChange}
         />
-        <FaceRecognition box={this.state.box} imageURL={this.state.imageURL} />
+
+        {route === "home" ? (
+          <div>
+            <Logo />
+            <Rank />
+            <ImageLinkForm
+              onInputChange={this.onInputChange}
+              onButtonSubmit={this.onButtonSubmit}
+            />
+            <FaceRecognition box={box} imageURL={imageURL} />
+          </div>
+        ) : route === "signin" ? (
+          <Signin onRouteChange={this.onRouteChange} />
+        ) : (
+          <Register onRouteChange={this.onRouteChange} />
+        )}
       </div>
     );
   }
