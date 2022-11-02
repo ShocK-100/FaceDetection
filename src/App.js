@@ -103,10 +103,6 @@ class App extends Component {
           if (Object.keys(data).length === 0) {
             console.log("data is empty");
           } else {
-            console.log(
-              "data: ",
-              data["regions"][0]["region_info"]["bounding_box"]
-            );
             this.displayFaceBox(
               this.calculateFaceLocation(
                 data["regions"][0]["region_info"]["bounding_box"]
