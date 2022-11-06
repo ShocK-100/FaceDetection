@@ -132,9 +132,11 @@ class App extends Component {
                 }),
               })
                 .then((response) => response.json())
-                .then((count) => {
+                .then((entriesCount) => {
                   this.setState(
-                    Object.assign(this.state.user, { entries: count })
+                    Object.assign(this.state.user, {
+                      entries: entriesCount["entries"],
+                    })
                   );
                 });
             }
