@@ -10,37 +10,6 @@ import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
 import Signin from "./components/Signin/Signin";
 import Register from "./components/Register/Register";
 
-const USER_ID = "tal";
-const PAT = "830f6947a77f40449fed31e2ca59ef80";
-const APP_ID = "my-first-application";
-const MODEL_ID = "face-detection";
-const MODEL_VERSION_ID = "6dc7e46bc9124c5c8824be4822abe105";
-const IMAGE_URL = "";
-let raw = JSON.stringify({
-  user_app_id: {
-    user_id: USER_ID,
-    app_id: APP_ID,
-  },
-  inputs: [
-    {
-      data: {
-        image: {
-          url: IMAGE_URL,
-        },
-      },
-    },
-  ],
-});
-
-let requestOptions = {
-  method: "POST",
-  headers: {
-    Accept: "application/json",
-    Authorization: "Key " + PAT,
-  },
-  body: raw,
-};
-
 const initialState = {
   input: "",
   imageURL: "",
@@ -111,28 +80,14 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({ imageURL: this.state.input }, () => {
-      let obj = JSON.parse(raw);
-      obj["inputs"][0]["data"]["image"]["url"] = this.state.imageURL;
-      raw = JSON.stringify(obj);
-
-      requestOptions = {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          Authorization: "Key " + PAT,
-        },
-        body: raw,
-      };
-
-      fetch(
-        "https://api.clarifai.com/v2/models/" +
-          MODEL_ID +
-          "/versions/" +
-          MODEL_VERSION_ID +
-          "/outputs",
-        requestOptions
-      )
-        .then((response) => response.text())
+      fetch("http://localhost:3000/imageurl", {
+        method: "post",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          input: this.state.input,
+        }),
+      })
+        .then((response) => response.json())
         .then((result) => {
           let data = JSON.parse(result)["outputs"][0]["data"];
 
