@@ -9,11 +9,11 @@ This app implements a sign in page, a registration page, API calls to Clarifai's
 ## Front End 
 Developed with React, deployed to Netlify, and made responsive as seen in the examples below:<br /><br />
 
-**Login page - Desktop:**
+**Login page - Desktop preview:**
 
 <img width="768" alt="image" src="https://user-images.githubusercontent.com/109988719/203302896-93cd0de2-38d9-42fa-bf0a-acdccd3ffcd4.png">
 
-**Login page - Mobile:**
+**Login page - Mobile preview:**
 
 <img width="250" alt="image" src="https://user-images.githubusercontent.com/109988719/203302821-fff93a6c-ee9b-4ee8-b3fb-2b1780312786.png">
 
