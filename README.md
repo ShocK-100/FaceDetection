@@ -6,3 +6,11 @@ The app implements a sign in page, a registration page, API calls to Clarifai's 
 
 
 ## Frontend 
+This app was developed with React, deployed to Netlify, and made responsive as seen in the examples below:<br /><br />
+
+
+**Login page - Mobile:**
+![image](https://user-images.githubusercontent.com/109988719/203298353-2b3aba3e-523f-4c3f-a670-4441fd5691d2.png)<br /><br />
+
+Login page - Desktop:
+![image](https://user-images.githubusercontent.com/109988719/203298931-cbe5779d-f8ad-4fe0-bb7a-bf73ebf966f2.png)
