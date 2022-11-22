@@ -10,7 +10,7 @@ This app was developed with React, deployed to Netlify, and made responsive as s
 
 
 **Login page - Mobile:**
-<img align="left" width="100" height="100" src="[http://www.fillmurray.com/100/100](https://user-images.githubusercontent.com/109988719/203299249-ac312bc0-bf60-4f5b-ad69-0e20d66093b1.png)">
+<img align="left" width="100" height="100" src="https://user-images.githubusercontent.com/44953386/201520459-32e63f4b-bc5e-4046-86c6-99c498e928e2.png">
 
 
 Login page - Desktop:
