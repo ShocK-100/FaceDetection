@@ -10,7 +10,7 @@ This app was developed with React, deployed to Netlify, and made responsive as s
 
 
 **Login page - Mobile:**
-![image](https://user-images.githubusercontent.com/109988719/203299249-ac312bc0-bf60-4f5b-ad69-0e20d66093b1.png  =100x20)<br /><br />
+![image](https://user-images.githubusercontent.com/109988719/203299249-ac312bc0-bf60-4f5b-ad69-0e20d66093b1.png =100x20)<br /><br />
 
 Login page - Desktop:
 ![image](https://user-images.githubusercontent.com/109988719/203299277-a85912c5-1006-4fab-94ef-0c12a1497904.png)
