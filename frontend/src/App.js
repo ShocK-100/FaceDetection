@@ -80,7 +80,7 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({ imageURL: this.state.input }, () => {
-      fetch("https://enigmatic-caverns-62977.herokuapp.com/imageurl", {
+      fetch("https://face-detection-talzvi.herokuapp.com/imageurl", {
         method: "post",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -95,7 +95,7 @@ class App extends Component {
             console.log("data is empty");
           } else {
             if (result) {
-              fetch("https://enigmatic-caverns-62977.herokuapp.com/image", {
+              fetch("https://face-detection-talzvi.herokuapp.com/image", {
                 method: "put",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
