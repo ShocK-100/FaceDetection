@@ -146,7 +146,7 @@ const App = () => {
           />
           <FaceRecognition boxes={boxes} imageURL={imageURL} />
         </div>
-      ) : route === "signin" ? (
+      ) : route === "signin" || route === "signout" ? (
         <Signin loadUser={loadUser} onRouteChange={onRouteChange} />
       ) : (
         <Register loadUser={loadUser} onRouteChange={onRouteChange} />
