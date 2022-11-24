@@ -14,7 +14,7 @@ const App = () => {
   const [imageURL, setImageURL] = useState("");
   const [boxes, setBoxes] = useState([]);
   const [route, setRoute] = useState("signin");
-  const [isSignedIn, setIsSignedIn] = useState("signin");
+  const [isSignedIn, setIsSignedIn] = useState(false);
   const [user, setUser] = useState({
     id: "",
     name: "",
@@ -105,7 +105,7 @@ const App = () => {
     setImageURL("");
     setBoxes([]);
     setRoute("signin");
-    setIsSignedIn("signin");
+    setIsSignedIn(false);
     setUser({
       id: "",
       name: "",
@@ -146,7 +146,7 @@ const App = () => {
           />
           <FaceRecognition boxes={boxes} imageURL={imageURL} />
         </div>
-      ) : route === "signin" || route === "signout" ? (
+      ) : route === "signin" ? (
         <Signin loadUser={loadUser} onRouteChange={onRouteChange} />
       ) : (
         <Register loadUser={loadUser} onRouteChange={onRouteChange} />
