@@ -5,50 +5,41 @@ import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
 import ParticlesBg from "particles-bg";
 import "./App.css";
-import { Component } from "react";
+import { useState, useEffect } from "react";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
 import Signin from "./components/Signin/Signin";
 import Register from "./components/Register/Register";
 
-const initialState = {
-  input: "",
-  imageURL: "",
-  boxes: [],
-  route: "signin",
-  isSignedIn: false,
-  user: {
+const App = () => {
+  const [input, setInput] = useState("");
+  const [imageURL, setImageURL] = useState("");
+  const [boxes, setBoxes] = useState([]);
+  const [route, setRoute] = useState("signin");
+  const [isSignedIn, setIsSignedIn] = useState("signin");
+  const [user, setUser] = useState({
     id: "",
     name: "",
     email: "",
     password: "",
     entries: 0,
     joined: "",
-  },
-};
+  });
 
-class App extends Component {
-  constructor() {
-    super();
-    this.state = initialState;
-  }
-
-  loadUser = (data) => {
-    this.setState({
-      user: {
-        id: data.id,
-        name: data.name,
-        email: data.email,
-        entries: data.entries,
-        joined: data.joined,
-      },
+  const loadUser = (data) => {
+    setUser({
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      entries: data.entries,
+      joined: data.joined,
     });
   };
 
-  onInputChange = (event) => {
-    this.setState({ input: event.target.value });
+  const onInputChange = (event) => {
+    setInput(event.target.value);
   };
 
-  calculateFaceLocation = (face) => {
+  const calculateFaceLocation = (face) => {
     const image = document.getElementById("inputImage");
     const width = Number(image.width);
     const height = Number(image.height);
@@ -60,110 +51,115 @@ class App extends Component {
     };
   };
 
-  displayFaceBox = (boxes) => {
-    this.setState({ boxes: boxes });
+  const displayFaceBox = (boxes) => {
+    setBoxes(boxes);
   };
 
-  updateBoxes = async (regions) => {
+  const updateBoxes = (regions) => {
     let boxes = [];
     for (let i = 0; i < regions.length; i++) {
       boxes.push(
-        this.calculateFaceLocation(regions[i]["region_info"]["bounding_box"])
+        calculateFaceLocation(regions[i]["region_info"]["bounding_box"])
       );
     }
-    this.displayFaceBox(boxes);
+    displayFaceBox(boxes);
   };
 
-  onButtonSubmit = () => {
-    this.setState({ imageURL: this.state.input }, () => {
-      fetch("https://face-detection-talzvi.herokuapp.com/imageurl", {
-        method: "post",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          input: this.state.input,
-        }),
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          let data = JSON.parse(result)["outputs"][0]["data"];
+  useEffect(() => {
+    fetch("https://face-detection-talzvi.herokuapp.com/imageurl", {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        input: input,
+      }),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        let data = JSON.parse(result)["outputs"][0]["data"];
 
-          if (Object.keys(data).length === 0) {
-            console.log("data is empty");
-          } else {
-            if (result) {
-              fetch("https://face-detection-talzvi.herokuapp.com/image", {
-                method: "put",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  id: this.state.user.id,
-                }),
+        if (Object.keys(data).length === 0) {
+          console.log("data is empty");
+        } else {
+          if (result) {
+            fetch("https://face-detection-talzvi.herokuapp.com/image", {
+              method: "put",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                id: user.id,
+              }),
+            })
+              .then((response) => response.json())
+              .then((entriesCount) => {
+                // is it correct?
+                let currentUser = user;
+                currentUser.entries = entriesCount["entries"];
+                setUser(currentUser);
               })
-                .then((response) => response.json())
-                .then((entriesCount) => {
-                  this.setState(
-                    Object.assign(this.state.user, {
-                      entries: entriesCount["entries"],
-                    })
-                  );
-                })
-                .catch(console.log);
-            }
-            this.updateBoxes(data["regions"]);
+              .catch(console.log);
           }
-        })
-        .catch((error) => console.log("error ", error));
+          updateBoxes(data["regions"]);
+        }
+      })
+      .catch((error) => console.log("error ", error));
+  }, [imageURL]);
+
+  const onButtonSubmit = () => {
+    setImageURL(input);
+  };
+
+  const setInitialState = () => {
+    setInput("");
+    setImageURL("");
+    setBoxes([]);
+    setRoute("signin");
+    setIsSignedIn("signin");
+    setUser({
+      id: "",
+      name: "",
+      email: "",
+      password: "",
+      entries: 0,
+      joined: "",
     });
   };
 
-  onRouteChange = (route) => {
+  const onRouteChange = (route) => {
     if (route === "signout") {
-      this.setState(initialState);
+      setInitialState();
     } else if (route === "home") {
-      this.setState({ isSignedIn: true });
+      setIsSignedIn(true);
     }
-    this.setState({ route: route });
+    setRoute(route);
   };
 
-  render() {
-    const { isSignedIn, imageURL, route, boxes } = this.state;
-    return (
-      <div className="App">
-        <ParticlesBg
-          className="particles"
-          type="cobweb"
-          bg={true}
-          num={100}
-          color="#ffffff"
-        />
-        <Navigation
-          isSignedIn={isSignedIn}
-          onRouteChange={this.onRouteChange}
-        />
+  return (
+    <div className="App">
+      <ParticlesBg
+        className="particles"
+        type="cobweb"
+        bg={true}
+        num={100}
+        color="#ffffff"
+      />
+      <Navigation isSignedIn={isSignedIn} onRouteChange={onRouteChange} />
 
-        {route === "home" ? (
-          <div>
-            <Logo />
-            <Rank
-              name={this.state.user.name}
-              entries={this.state.user.entries}
-            />
-            <ImageLinkForm
-              onInputChange={this.onInputChange}
-              onButtonSubmit={this.onButtonSubmit}
-            />
-            <FaceRecognition boxes={boxes} imageURL={imageURL} />
-          </div>
-        ) : route === "signin" || route === "signout" ? (
-          <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
-        ) : (
-          <Register
-            loadUser={this.loadUser}
-            onRouteChange={this.onRouteChange}
+      {route === "home" ? (
+        <div>
+          <Logo />
+          <Rank name={user.name} entries={user.entries} />
+          <ImageLinkForm
+            onInputChange={onInputChange}
+            onButtonSubmit={onButtonSubmit}
           />
-        )}
-      </div>
-    );
-  }
-}
+          <FaceRecognition boxes={boxes} imageURL={imageURL} />
+        </div>
+      ) : route === "signin" || route === "signout" ? (
+        <Signin loadUser={loadUser} onRouteChange={onRouteChange} />
+      ) : (
+        <Register loadUser={loadUser} onRouteChange={onRouteChange} />
+      )}
+    </div>
+  );
+};
 
 export default App;
