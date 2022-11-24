@@ -12,22 +12,27 @@ const Signin = ({ loadUser, onRouteChange }) => {
     setSignInPassword(event.target.value);
   };
 
-  const onSubmitSignIn = () => {
-    fetch("https://face-detection-talzvi.herokuapp.com/signin", {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: signInEmail,
-        password: signInPassword,
-      }),
-    })
-      .then((response) => response.json())
-      .then((user) => {
-        if (user?.id) {
-          loadUser(user);
-          onRouteChange("home");
+  const onSubmitSignIn = async () => {
+    try {
+      const response = await fetch(
+        "https://face-detection-talzvi.herokuapp.com/signin",
+        {
+          method: "post",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: signInEmail,
+            password: signInPassword,
+          }),
         }
-      });
+      );
+      const user = await response.json();
+      if (user?.id) {
+        loadUser(user);
+        onRouteChange("home");
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

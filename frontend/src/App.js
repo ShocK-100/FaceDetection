@@ -64,40 +64,52 @@ const App = () => {
     displayFaceBox(boxes);
   };
 
-  const onButtonSubmit = () => {
+  const onButtonSubmit = async () => {
     setImageURL(input);
-    fetch("https://face-detection-talzvi.herokuapp.com/imageurl", {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        input: input,
-      }),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        let data = JSON.parse(result)["outputs"][0]["data"];
-
-        if (Object.keys(data).length === 0) {
-          console.log("data is empty");
-        } else {
-          if (result) {
-            fetch("https://face-detection-talzvi.herokuapp.com/image", {
-              method: "put",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                id: user.id,
-              }),
-            })
-              .then((response) => response.json())
-              .then((entriesCount) => {
-                setUser({ ...user, entries: entriesCount["entries"] });
-              })
-              .catch(console.log);
-          }
-          updateBoxes(data["regions"]);
+    try {
+      const response = await fetch(
+        "https://face-detection-talzvi.herokuapp.com/imageurl",
+        {
+          method: "post",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            input: input,
+          }),
         }
-      })
-      .catch((error) => console.log("error ", error));
+      );
+      const result = await response.json();
+      let data = JSON.parse(result)["outputs"][0]["data"];
+
+      if (Object.keys(data).length === 0) {
+        console.log("data is empty");
+      } else {
+        if (result) {
+          handleValidData();
+        }
+        updateBoxes(data["regions"]);
+      }
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  };
+
+  const handleValidData = async () => {
+    try {
+      const response = await fetch(
+        "https://face-detection-talzvi.herokuapp.com/image",
+        {
+          method: "put",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: user.id,
+          }),
+        }
+      );
+      const entriesCount = await response.json();
+      setUser({ ...user, entries: entriesCount["entries"] });
+    } catch (error) {
+      console.log("error: ", error);
+    }
   };
 
   const setInitialState = () => {
