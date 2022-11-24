@@ -14,6 +14,14 @@ const initialState = {
   input: "",
   imageURL: "",
   box: {},
+  boxes: [
+    {
+      leftCol: 50,
+      topRow: 50,
+      rightCol: 50,
+      bottomRow: 50,
+    },
+  ],
   route: "signin",
   isSignedIn: false,
   user: {
@@ -33,6 +41,14 @@ class App extends Component {
       input: "",
       imageURL: "",
       box: {},
+      boxes: [
+        {
+          leftCol: 50,
+          topRow: 50,
+          rightCol: 50,
+          bottomRow: 50,
+        },
+      ],
       route: "signin",
       isSignedIn: false,
       user: {
@@ -58,6 +74,10 @@ class App extends Component {
     });
   };
 
+  onInputChange = (event) => {
+    this.setState({ input: event.target.value });
+  };
+
   calculateFaceLocation = (face) => {
     const image = document.getElementById("inputImage");
     const width = Number(image.width);
@@ -70,12 +90,18 @@ class App extends Component {
     };
   };
 
-  displayFaceBox = (box) => {
-    this.setState({ box: box });
+  displayFaceBox = (boxes) => {
+    this.setState({ boxes: boxes });
   };
 
-  onInputChange = (event) => {
-    this.setState({ input: event.target.value });
+  updateBoxes = async (regions) => {
+    let boxes = [];
+    for (let i = 0; i < regions.length; i++) {
+      boxes.push(
+        this.calculateFaceLocation(regions[i]["region_info"]["bounding_box"])
+      );
+    }
+    this.displayFaceBox(boxes);
   };
 
   onButtonSubmit = () => {
@@ -112,11 +138,7 @@ class App extends Component {
                 })
                 .catch(console.log);
             }
-            this.displayFaceBox(
-              this.calculateFaceLocation(
-                data["regions"][0]["region_info"]["bounding_box"]
-              )
-            );
+            this.updateBoxes(data["regions"]);
           }
         })
         .catch((error) => console.log("error ", error));
@@ -133,7 +155,7 @@ class App extends Component {
   };
 
   render() {
-    const { isSignedIn, imageURL, route, box } = this.state;
+    const { isSignedIn, imageURL, route, box, boxes } = this.state;
     return (
       <div className="App">
         <ParticlesBg
@@ -159,7 +181,7 @@ class App extends Component {
               onInputChange={this.onInputChange}
               onButtonSubmit={this.onButtonSubmit}
             />
-            <FaceRecognition box={box} imageURL={imageURL} />
+            <FaceRecognition box={box} boxes={boxes} imageURL={imageURL} />
           </div>
         ) : route === "signin" ? (
           <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
