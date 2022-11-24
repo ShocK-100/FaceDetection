@@ -5,7 +5,7 @@ import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
 import ParticlesBg from "particles-bg";
 import "./App.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
 import Signin from "./components/Signin/Signin";
 import Register from "./components/Register/Register";
@@ -65,7 +65,8 @@ const App = () => {
     displayFaceBox(boxes);
   };
 
-  useEffect(() => {
+  const onButtonSubmit = () => {
+    setImageURL(input);
     fetch("https://face-detection-talzvi.herokuapp.com/imageurl", {
       method: "post",
       headers: { "Content-Type": "application/json" },
@@ -90,10 +91,7 @@ const App = () => {
             })
               .then((response) => response.json())
               .then((entriesCount) => {
-                // is it correct?
-                let currentUser = user;
-                currentUser.entries = entriesCount["entries"];
-                setUser(currentUser);
+                setUser({ ...user, entries: entriesCount["entries"] });
               })
               .catch(console.log);
           }
@@ -101,10 +99,6 @@ const App = () => {
         }
       })
       .catch((error) => console.log("error ", error));
-  }, [imageURL]);
-
-  const onButtonSubmit = () => {
-    setImageURL(input);
   };
 
   const setInitialState = () => {
