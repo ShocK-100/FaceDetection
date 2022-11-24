@@ -13,15 +13,7 @@ import Register from "./components/Register/Register";
 const initialState = {
   input: "",
   imageURL: "",
-  box: {},
-  boxes: [
-    {
-      leftCol: 50,
-      topRow: 50,
-      rightCol: 50,
-      bottomRow: 50,
-    },
-  ],
+  boxes: [],
   route: "signin",
   isSignedIn: false,
   user: {
@@ -37,29 +29,7 @@ const initialState = {
 class App extends Component {
   constructor() {
     super();
-    this.state = {
-      input: "",
-      imageURL: "",
-      box: {},
-      boxes: [
-        {
-          leftCol: 50,
-          topRow: 50,
-          rightCol: 50,
-          bottomRow: 50,
-        },
-      ],
-      route: "signin",
-      isSignedIn: false,
-      user: {
-        id: "",
-        name: "",
-        email: "",
-        password: "",
-        entries: 0,
-        joined: "",
-      },
-    };
+    this.state = initialState;
   }
 
   loadUser = (data) => {
@@ -155,7 +125,7 @@ class App extends Component {
   };
 
   render() {
-    const { isSignedIn, imageURL, route, box, boxes } = this.state;
+    const { isSignedIn, imageURL, route, boxes } = this.state;
     return (
       <div className="App">
         <ParticlesBg
@@ -181,7 +151,7 @@ class App extends Component {
               onInputChange={this.onInputChange}
               onButtonSubmit={this.onButtonSubmit}
             />
-            <FaceRecognition box={box} boxes={boxes} imageURL={imageURL} />
+            <FaceRecognition boxes={boxes} imageURL={imageURL} />
           </div>
         ) : route === "signin" ? (
           <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
